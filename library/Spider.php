@@ -655,9 +655,8 @@ class Spider implements TorAble
 		{
 			//check if count of steps minus current step is 0 
 			//if so -> all steps are completed by program
-			//make note here, that +1 is because of step to be executed not 
 			//count number
-			if(count($this->steps)-($this->resetStep+1)==0)
+			if(count($this->steps)-($this->resetStep)==0)
 			{
 				return false;
 			}
