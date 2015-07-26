@@ -1,0 +1,19 @@
+{
+	"autoload": {
+		"classmap": [
+		  "library",
+		  "unitTest",
+		  "settings",
+		  "interface"
+		],
+		"files": [
+		          "referencedLibraries/LIB_parse.php",
+		          "referencedLibraries/LIB_http.php"
+		          ]
+	},
+	
+	"require": {
+		"pear/console_commandline": "dev-trunk"
+	}
+	
+}

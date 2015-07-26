@@ -1,0 +1,112 @@
+[
+    {
+        "name": "pear/pear_exception",
+        "version": "v1.0.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/pear/PEAR_Exception.git",
+            "reference": "8c18719fdae000b690e3912be401c76e406dd13b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/pear/PEAR_Exception/zipball/8c18719fdae000b690e3912be401c76e406dd13b",
+            "reference": "8c18719fdae000b690e3912be401c76e406dd13b",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=4.4.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "*"
+        },
+        "time": "2015-02-10 20:07:52",
+        "type": "class",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "PEAR": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "include-path": [
+            "."
+        ],
+        "license": [
+            "BSD-2-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Helgi Thormar",
+                "email": "dufuz@php.net"
+            },
+            {
+                "name": "Greg Beaver",
+                "email": "cellog@php.net"
+            }
+        ],
+        "description": "The PEAR Exception base class.",
+        "homepage": "https://github.com/pear/PEAR_Exception",
+        "keywords": [
+            "exception"
+        ]
+    },
+    {
+        "name": "pear/console_commandline",
+        "version": "dev-trunk",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/pear/Console_CommandLine.git",
+            "reference": "18ac06ef5d0ea4db3522b1d0b5869547f0aac933"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/pear/Console_CommandLine/zipball/18ac06ef5d0ea4db3522b1d0b5869547f0aac933",
+            "reference": "18ac06ef5d0ea4db3522b1d0b5869547f0aac933",
+            "shasum": ""
+        },
+        "require": {
+            "pear/pear_exception": "*",
+            "php": ">=5.1.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "*"
+        },
+        "time": "2015-01-01 12:27:48",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "psr-0": {
+                "Console": "./"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "include-path": [
+            ""
+        ],
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Richard Quadling",
+                "email": "rquadling@gmail.com"
+            },
+            {
+                "name": "David Jean Louis",
+                "email": "izimobil@gmail.com"
+            }
+        ],
+        "description": "A full featured command line options and arguments parser.",
+        "homepage": "https://github.com/pear/Console_CommandLine",
+        "keywords": [
+            "console"
+        ]
+    }
+]
