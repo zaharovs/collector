@@ -69,6 +69,11 @@ class WebsiteCollector
 	 */
 	public static $collectedCategories = array();
 	
+	/**
+	 * Number of exceptions happened for execution, therefore make a track to re-throw when required.
+	 * @var int
+	 */
+	public static $numOfExceptions = 0;
 	
 	/**
 	 * Getter method for website domain
@@ -1122,6 +1127,8 @@ class WebsiteCollector
 	}
 	
 	
+	
+	
 	/**
 	 * This method will do shortcut for collecting models required.
 	 * 
@@ -1283,11 +1290,8 @@ class WebsiteCollector
 		 		++$outN; //increment
 		 		echo "\nData has been started to collecting n: {$outN}";
 		 		
-				//in case of failure, collect steps to re-run them straight away
-		 		
-				$model = $spider->startFetchData(Spider::PRE_COLLECT_CATEGORY);
-				//pass array of sleep and skip $model pre-collection
-				$output = $spider->startFetchData(Spider::SKIP_COLLECT_CATEGORY, $sleepIn);
+		 		$model = $spider->startFetchData(Spider::PRE_COLLECT_CATEGORY);
+		 		$output = $spider->startFetchData(Spider::SKIP_COLLECT_CATEGORY);
 				//check what is output in here
 				if($output==false)
 				{
@@ -1297,14 +1301,46 @@ class WebsiteCollector
 									"\nModel: {$spider->getSteps()[$spider->getResetStep()]}";
 					//echo "\nOutput is false! website collector line 1287.\n";
 				}
+				else
+				{
+					//anulate exceptions, as execution did happen
+					HelperStaticChanger::changeStaticProperty(__CLASS__, "numOfExceptions", 0);
+				}
 		 	}
 		 	catch (CollectorException $e)
 		 	{
+		 		//In case cURL will not be able execute page, make spider be sustainable
+	 			//for repeating execution of 5 minutes every 10 seconds (60times*10s), to make sure
+	 			//that this happened not for sake of internet, or tor temporary disconection.
+		 		
 		 		//TODO under testing yet here
 		 		//save steps
 		 		HelperStaticChanger::changeStaticProperty("zaharovs\collector\Spider", "collectedSteps", $spider->getSteps());
-		 		//re-throw exception
-		 		throw new CollectorException($e->getMessage());
+		 		
+		 		//don't throw error for some time
+		 		if(self::$numOfExceptions<60)
+		 		{
+		 			//wait for minute
+		 			echo "\nRe-execute statement in 10 seconds";
+		 			for($i=0; $i<10; $i++)
+		 			{
+		 				sleep(1);
+		 				echo ".";
+		 				if($i==59)
+		 				{
+		 					echo "\n";
+		 				}
+		 			}
+		 			HelperStaticChanger::changeStaticProperty(__CLASS__, "numOfExceptions", self::$numOfExceptions+1);
+		 			self::collectProducts($cookieIn, $resourceSaveLocationIn, $spider, $sleepIn);
+		 		}
+		 		else 
+		 		{
+		 			//make sure to annulate num of exceptions
+		 			HelperStaticChanger::changeStaticProperty(__CLASS__, "numOfExceptions", 0);
+		 			//re-throw exception
+		 			throw new CollectorException($e->getMessage());
+		 		}
 		 	}
 		 	//to be re-think here
 			//check if output false -> go out of loop
@@ -1392,7 +1428,6 @@ class WebsiteCollector
 		return true;
 	}
 
-   
    /**
     * Method to check that all categories exist within menu
     * 
