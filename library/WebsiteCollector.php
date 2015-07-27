@@ -70,12 +70,6 @@ class WebsiteCollector
 	public static $collectedCategories = array();
 	
 	/**
-	 * Number of exceptions happened for execution, therefore make a track to re-throw when required.
-	 * @var int
-	 */
-	public static $numOfExceptions = 0;
-	
-	/**
 	 * Getter method for website domain
 	 * @return string WebsiteDomain
 	 */
