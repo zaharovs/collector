@@ -1414,8 +1414,17 @@ class WebsiteCollector
 				if($itemPictureModel!=false)
 				{
 					//for picture is required to save it in location specified e.g. perform resource method self
-					self::getResourceExec($cookieIn, $itemPictureModel, "http://".WebsiteCollector::$websiteDomain."/",
+					$output = self::getResourceExec($cookieIn, $itemPictureModel, "http://".WebsiteCollector::$websiteDomain."/",
 					$resourceSaveLocationIn.DIRECTORY_SEPARATOR.$pictureName, $spider->getProxy(), $spider->getBrowserName());
+					//updating product picture, if it was collected (and make note, if there was a problem of downloading)
+					if($output)
+					{
+						DatabaseSettings::updatePicture($itemPictureModel, $itemModel);
+					}
+					else 
+					{
+						DatabaseSettings::updatePicture($itemCategory." [NOT DOWNLOADED]", $itemModel);
+					}
 				}
 			}
 		 }

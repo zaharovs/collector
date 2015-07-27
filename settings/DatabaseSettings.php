@@ -43,40 +43,47 @@ class DatabaseSettings
 	
 	/**
 	 * Prepared statement for using in product insertion
-	 * @var PDO prepared statement
+	 * @var \PDOStatement
 	 */
 	public static $stmtProduct;
 	
 	/**
 	 * Prepared statement for using in vendor insertion
-	 * @var PDO statement
+	 * @var \PDOStatement
 	 */
 	public static $stmtVendor;
 	
 	/**
 	 * Prepared statement for using in website insertion
-	 * @var PDO statement
+	 * @var \PDOStatement
 	 */
 	public static $stmtWebsite;
 	
 	/**
 	 * Prepared statement for using in category insertion
-	 * @var PDO statement
+	 * @var \PDOStatement
 	 */
 	public static $stmtCategory;
 	
 	/**
 	 * Prepared statement for using in subcategory insertion
-	 * @var PDO statement
+	 * @var \PDOStatement
 	 */
 	public static $stmtSubCategory;
 	
 	/**
+	 * Prepared statement for updating image in product table
+	 * @var \PDOStatement
+	 */
+	public static $stmtUpdateImage;
+	
+	/**
 	 * Connection variable, specifying PDO 
-	 * @var PDO connection
+	 * @var \PDOStatement
 	 */
 	public static $pdoConnection;
 	
+
 	
 	
 	/**
@@ -222,6 +229,7 @@ class DatabaseSettings
 					product_id				INT(20)	AUTO_INCREMENT PRIMARY KEY,
 					product_model			VARCHAR(200) NOT NULL,
 					product_name			VARCHAR(100) NOT NULL,
+				    product_picture			VARCHAR(100),
 					product_description		TEXT NOT NULL,
 					product_origin			VARCHAR(50) NOT NULL,
 					product_postage			VARCHAR(50) NOT NULL,
@@ -338,7 +346,32 @@ class DatabaseSettings
 		$stmtWebsite = $connectionIn->prepare("INSERT INTO tblWebsite (website_id, website_url, website_description)
 					VALUES (:website_id, :website_url, :website_description)");
 		HelperStaticChanger::changeStaticProperty(__CLASS__, "stmtWebsite", $stmtWebsite);
+		
+		//for additional information requires to save images to database (for retrieving them)
+		$stmtUpdateImage = $connectionIn->prepare("UPDATE tblProduct SET product_picture = :product_picture WHERE product_model = :product_model");
+		HelperStaticChanger::changeStaticProperty(__CLASS__, "stmtWebsite", $stmtUpdateImage);
+	}
 	
+	/**
+	 * Method for updating picture of the product in database
+	 * 
+	 * @param string $productPicture required.		String representing picture name & locationl
+	 * @param string $productModel required.		String representing model of the product, where picture to be updated.
+	 * @throws CollectorException	if there will any exception happening during updating picture.
+	 */
+	public static function updatePicture ($productPicture, $productModel)
+	{
+		try 
+		{
+			self::$stmtUpdateImage->bindParam("product_picture", $productPicture);
+			self::$stmtUpdateImage->bindParam("product_model", $productModel);
+			self::$stmtUpdateImage->execute();
+		}
+		catch (\PDOException $e)
+		{
+			$string = $e->getMessage();
+			throw new CollectorException($string);
+		}
 	}
 	
 	/**
