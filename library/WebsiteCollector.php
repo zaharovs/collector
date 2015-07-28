@@ -1348,8 +1348,8 @@ class WebsiteCollector
 			//check $itemHTML for debugging now, to see why it can't collect data
 			if($itemHTML == false)
 			{
-				echo "\nModel : {$model->getModel()} had a problem to execute getProductHTML() method. Check it manually.";
-				die("\nProgram is stopping for fix");
+				//just skip it at the moment for later fix
+				echo "\$itemHTML happened to be false, check it later!\n";
 			}
 			//if it went fine continue
 			$itemName = self::getProductName($itemHTML);
