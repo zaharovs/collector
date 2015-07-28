@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 namespace zaharovs\collector;
-use zaharovs;
+
 require 'vendor/autoload.php';
 
 /**
