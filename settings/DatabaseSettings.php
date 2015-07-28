@@ -349,7 +349,7 @@ class DatabaseSettings
 		
 		//for additional information requires to save images to database (for retrieving them)
 		$stmtUpdateImage = $connectionIn->prepare("UPDATE tblProduct SET product_picture = :product_picture WHERE product_model = :product_model");
-		HelperStaticChanger::changeStaticProperty(__CLASS__, "stmtWebsite", $stmtUpdateImage);
+		HelperStaticChanger::changeStaticProperty(__CLASS__, "stmtUpdateImage", $stmtUpdateImage);
 	}
 	
 	/**
