@@ -359,7 +359,7 @@ class DatabaseSettings
 	 * @param string $productModel required.		String representing model of the product, where picture to be updated.
 	 * @throws CollectorException	if there will any exception happening during updating picture.
 	 */
-	public static function updatePicture ($productPicture, $productModel)
+	public static function updatePicture ($productModel, $productPicture)
 	{
 		try 
 		{
