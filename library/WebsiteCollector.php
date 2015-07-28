@@ -1419,11 +1419,11 @@ class WebsiteCollector
 					//updating product picture, if it was collected (and make note, if there was a problem of downloading)
 					if($output)
 					{
-						DatabaseSettings::updatePicture($itemPictureModel, $itemModel);
+						DatabaseSettings::updatePicture($itemModel, $pictureName);
 					}
 					else 
 					{
-						DatabaseSettings::updatePicture($itemCategory." [NOT DOWNLOADED]", $itemModel);
+						DatabaseSettings::updatePicture($itemModel, $pictureName." [NOT DOWNLOADED]");
 					}
 				}
 			}
