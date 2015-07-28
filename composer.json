@@ -2,7 +2,6 @@
 	"autoload": {
 		"classmap": [
 		  "library",
-		  "unitTest",
 		  "settings",
 		  "interface"
 		],

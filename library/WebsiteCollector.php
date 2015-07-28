@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 namespace zaharovs\collector;
+use zaharovs;
 require 'vendor/autoload.php';
 
 /**
@@ -1103,7 +1104,9 @@ class WebsiteCollector
 		{
 			foreach ($collectedModels as $model)
 			{
-				if(!array_search("http://".self::$websiteDomain.$model->getModel(),$db_models))
+				//to update picture names requires to select currently hold records and 
+				//update their details (instead of chosing comparison records)
+				if(array_search("http://".self::$websiteDomain.$model->getModel(),$db_models))
 				{
 					$current_models[]=$model;
 				}
@@ -1407,24 +1410,25 @@ class WebsiteCollector
 						DatabaseSettings::pkSubCategory($itemSubcategory, 
 						DatabaseSettings::pkCategory($itemCategory, self::$websiteDomain)), 
 						$itemDateCollected);
-				//get name of the picuture model for saving
-				$pictureName = self::getProductImageName($itemPictureModel);
-				//TODO here this step must go up, if we want to specify, that picture was not able to be loaded in system
-				//check if picture is available then load it into the system
-				if($itemPictureModel!=false)
+			}
+			//this part is for updating name of the pictures
+			//get name of the picuture model for saving
+			$pictureName = self::getProductImageName($itemPictureModel);
+			//TODO here this step must go up, if we want to specify, that picture was not able to be loaded in system
+			//check if picture is available then load it into the system
+			if($itemPictureModel!=false)
+			{
+				//for picture is required to save it in location specified e.g. perform resource method self
+				$output = self::getResourceExec($cookieIn, $itemPictureModel, "http://".WebsiteCollector::$websiteDomain."/",
+				$resourceSaveLocationIn.DIRECTORY_SEPARATOR.$pictureName, $spider->getProxy(), $spider->getBrowserName());
+				//updating product picture, if it was collected (and make note, if there was a problem of downloading)
+				if($output)
 				{
-					//for picture is required to save it in location specified e.g. perform resource method self
-					$output = self::getResourceExec($cookieIn, $itemPictureModel, "http://".WebsiteCollector::$websiteDomain."/",
-					$resourceSaveLocationIn.DIRECTORY_SEPARATOR.$pictureName, $spider->getProxy(), $spider->getBrowserName());
-					//updating product picture, if it was collected (and make note, if there was a problem of downloading)
-					if($output)
-					{
-						DatabaseSettings::updatePicture($itemPictureModel, $itemModel);
-					}
-					else 
-					{
-						DatabaseSettings::updatePicture($itemCategory." [NOT DOWNLOADED]", $itemModel);
-					}
+					DatabaseSettings::updatePicture($itemModel, $pictureName);
+				}
+				else
+				{
+					DatabaseSettings::updatePicture($itemModel, $pictureName." [NOT DOWNLOADED]");
 				}
 			}
 		 }

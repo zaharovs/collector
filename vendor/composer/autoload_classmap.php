@@ -6,7 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'zaharovs\\collector\\CheckSite' => $baseDir . '/unitTest/CheckSite.php',
     'zaharovs\\collector\\CollectorException' => $baseDir . '/library/CollectorException.php',
     'zaharovs\\collector\\DatabaseSettings' => $baseDir . '/settings/DatabaseSettings.php',
     'zaharovs\\collector\\ExecClass' => $baseDir . '/library/ExecClass.php',
@@ -16,7 +15,6 @@ return array(
     'zaharovs\\collector\\HelperStaticChanger' => $baseDir . '/library/HelperStaticChanger.php',
     'zaharovs\\collector\\Model' => $baseDir . '/library/Model.php',
     'zaharovs\\collector\\ParsingTechniques' => $baseDir . '/library/ParsingTechniques.php',
-    'zaharovs\\collector\\SomeException' => $baseDir . '/unitTest/CheckSite.php',
     'zaharovs\\collector\\Spider' => $baseDir . '/library/Spider.php',
     'zaharovs\\collector\\Step' => $baseDir . '/library/Step.php',
     'zaharovs\\collector\\TorAble' => $baseDir . '/library/TorAble.php',
