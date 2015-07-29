@@ -845,21 +845,62 @@ class WebsiteCollector
 			echo "\nHere is following exception message: {$e->getMessage()}";
 			echo "\nThis happened in following time: ".gmdate('H:i:s', GeneralPerformance::calculateTime());
 			
-			//make sure to try execute step for a 10 times, and see if it helps.
-			if(self::$numOfExceptions<10)
+			//make sure to try execute step for a 60 times, and see if it helps.
+			if(self::$numOfExceptions<60)
 			{
-				//check how many times statement already has been restarted, if more than 10? make sure to raise an exception
+				//echo num of exception
+				echo "\nException n: ".self::$numOfExceptions."\n";
+				
+				//check how many times statement already has been restarted, if more than 60? make sure to raise an exception
 				//no matter of what
-				echo "\nProgramme will try to execute statement again in 10 sec";
-				for($i=0; $i<10; $i++)
+				
+				//for first 24 times try 10 seconds ~ 6 min
+				if(self::$numOfExceptions<25)
 				{
-					sleep(1);
-					echo ".";
-					if($i==9)
+					echo "\nProgramme will try to execute statement again in 10 sec";
+					for($i=0; $i<10; $i++)
 					{
-						echo "\n";
+						sleep(1);
+						echo ".";
+						if($i==9)
+						{
+							echo "\n";
+						}
 					}
 				}
+				//here requires a far longer wait ~ 15 * 15 = 225 min ~ 3.45 h
+				if(self::$numOfExceptions>24&&self::$numOfExceptions<50)
+				{
+					echo "\nProgramme will restart in 15 minutes";
+					for ($i=0; $i<15;$i++)
+					{
+						sleep(60);
+						echo "\n.".($i+1)."min...";
+						if($i==14)
+						{
+							//make new line
+							echo "\n";
+						}
+					}
+				}
+				
+				//for last statements make more than 25 minutes
+				//minutes for waiting is 250 which is 4 hours
+				if(self::$numOfExceptions>50)
+				{
+					echo "\nProgramme will restart in 25 minutes";
+					for ($i=0; $i<25;$i++)
+					{
+						sleep(60);
+						echo "\n.".($i+1)."min...";
+						if($i==14)
+						{
+							//make new line
+							echo "\n";
+						}
+					}
+				}
+				
 				echo "\nStatement is restarting...";
 				//change number of exceptions here
 				HelperStaticChanger::changeStaticProperty(__CLASS__, "numOfExceptions", (self::$numOfExceptions+1));
