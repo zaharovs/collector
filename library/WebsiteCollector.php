@@ -291,7 +291,6 @@ class WebsiteCollector
 		//check that specified name exists within $leftMenuNames
 		if(array_search($menuNameIn, $leftMenuNames)===false)
 		{
-			die();
 			throw new CollectorException("Please re-check name -> does not exist within left menu!");
 		}
 		//get all models for names
