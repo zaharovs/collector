@@ -1189,7 +1189,18 @@ class WebsiteCollector
 		catch (CollectorException $e)
 		{
 			//wait required time
-			
+			if(GeneralPerformance::$numOfExceptions<60)
+			{
+				//wait and try again
+				GeneralPerformance::waitForResponse();
+				self::singleCategory($collectedCategoriesIn, $collectedModels, $cookieIn, $proxyIn, $torBrowserLocationIn);
+			}
+			else 
+			{
+				//reset steps
+				GeneralPerformance::resetWaitForResponse();
+				throw new CollectorException($e->getMessage());
+			}
 		}
 		
 		//return collected models
