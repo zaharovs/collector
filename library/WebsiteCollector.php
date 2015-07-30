@@ -1339,7 +1339,21 @@ class WebsiteCollector
 			if(!$output)
 			{
 				//if skip is specified
-				break;
+				//don't throw error for some time
+				if(GeneralPerformance::$numOfExceptions<30)
+				{
+					//wait for response time specified in General Peroformance
+					GeneralPerformance::waitForResponse();
+					//execute later here
+					self::collectProducts($cookieIn, $resourceSaveLocationIn, $spider, $sleepIn);
+				}
+				else
+				{
+					//make sure to annulate num of exceptions
+					GeneralPerformance::resetWaitForResponse();
+					//skip given step here
+					continue;
+				}
 			}
 			//as in item's page now here -> collect all necessary data
 			$itemHTML = self::getProductHTML($output);
