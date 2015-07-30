@@ -1185,6 +1185,8 @@ class WebsiteCollector
 		{
 			$collectedModels = self::extractModel($cookieIn, $model, $parentCategory, $subcategory,
 											$collectedModels, $referer, $proxyIn, $torBrowserLocationIn);
+			//make error statement back to to zero, if success
+			GeneralPerformance::resetWaitForResponse();
 		}
 		catch (CollectorException $e)
 		{
