@@ -584,19 +584,16 @@ function scan_categories(\Console_CommandLine_Result $resultIn, $errN=0)
 			echo "\nCurrent time of the execution is: ".gmdate('H:i:s',GeneralPerformance::calculateTime())." per partly scanned of :"
 										.GeneralPerformance::$scannedModels. " models";
 			echo "\nexception happened. Details are: {$e->getMessage()}\n";
-			echo "spider will restart run in 10 seconds";
-			for($i=0; $i<10; $i++)
+			
+			//make sure to try execute step for a 60 times, and see if it helps.
+			if(GeneralPerformance::$numOfExceptions<60)
 			{
-				sleep(1);
-				echo ".";
-				if($i==9)
-				{
-					//new line
-					echo "\nRestarting... ";
-				}
-			}
-			//restart else throw again in here
-			helper_run($resultIn);
+				//make some sleep
+				GeneralPerformance::waitForResponse();
+				//restart else throw again in here
+				helper_run($resultIn);
+			}			
+			
 		}
 		elseif($e->getCode()==3)
 		{
@@ -607,26 +604,15 @@ function scan_categories(\Console_CommandLine_Result $resultIn, $errN=0)
 			echo "\nCurrent time of the execution is: ".gmdate('H:i:s',GeneralPerformance::calculateTime())." per partly scanned of :"
 					.GeneralPerformance::$scannedModels. " models";
 					echo "\nexception happened. Details are: {$e->getMessage()}\n";
-					echo "spider will restart run in 10 seconds";
-					for($i=0; $i<10; $i++)
-					{
-						sleep(1);
-						echo ".";
-						if($i==9)
-						{
-							//new line
-							echo "\nRestarting... ";
-						}
-					}
-					//restart else throw again in here
-					helper_run($resultIn, 3);
+			
+			GeneralPerformance::waitForResponse();
+			//restart else throw again in here
+			helper_run($resultIn, 3);
 		}
 		else 
 		{
 			//at the moment restart anyways
-// 			echo $e->getMessage();
-// 			//try to restart?
-// 			die();
+			GeneralPerformance::waitForResponse();
 			helper_run($resultIn);
 		}
 	}

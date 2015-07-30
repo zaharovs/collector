@@ -56,11 +56,6 @@ class WebsiteCollector
 	 */
 	public static $headers=null;
 	
-	/**
-	 * Number of exception's already happened, therefore can make a track of maximum
-	 * @var int
-	 */
-	public static $numOfExceptions =0;
 	
 	/**
 	 * Collection of category, and subcategory structure array of current choice of 
@@ -783,7 +778,12 @@ class WebsiteCollector
 	}
 	
 	/**
-	 * Method for determining whether subCategories exist within menu, or not
+	 * Method for determining whether subCategories exist within menu, or not.
+	 * 
+	 * In detail: Execution will continue for around 10 hours if server will fail to process querry, therefore 
+	 * to make sure it will be up (as TOR services tend to stay down a while each day - couple of hours), and 
+	 * if however it fails, it will return to previous step anyways (in case menu had been deleted). At later version
+	 * make sure to add more user control over this waiting time.
 	 * 
 	 * @param string $cookieIn required.		Represents file in the system, cookie location
 	 * @param string $proxyIn required. 		Represents proxy settings of the Collector.
@@ -846,73 +846,16 @@ class WebsiteCollector
 			echo "\nThis happened in following time: ".gmdate('H:i:s', GeneralPerformance::calculateTime());
 			
 			//make sure to try execute step for a 60 times, and see if it helps.
-			if(self::$numOfExceptions<60)
+			if(GeneralPerformance::$numOfExceptions<60)
 			{
-				//echo num of exception
-				echo "\nException n: ".self::$numOfExceptions."\n";
-				
-				//check how many times statement already has been restarted, if more than 60? make sure to raise an exception
-				//no matter of what
-				
-				//for first 24 times try 10 seconds ~ 6 min
-				if(self::$numOfExceptions<25)
-				{
-					echo "\nProgramme will try to execute statement again in 10 sec";
-					for($i=0; $i<10; $i++)
-					{
-						sleep(1);
-						echo ".";
-						if($i==9)
-						{
-							echo "\n";
-						}
-					}
-				}
-				//here requires a far longer wait ~ 15 * 15 = 225 min ~ 3.45 h
-				if(self::$numOfExceptions>24&&self::$numOfExceptions<50)
-				{
-					echo "\nProgramme will restart in 15 minutes";
-					for ($i=0; $i<15;$i++)
-					{
-						sleep(60);
-						echo "\n.".($i+1)."min...";
-						if($i==14)
-						{
-							//make new line
-							echo "\n";
-						}
-					}
-				}
-				
-				//for last statements make more than 25 minutes
-				//minutes for waiting is 250 which is 4 hours
-				if(self::$numOfExceptions>50)
-				{
-					echo "\nProgramme will restart in 25 minutes";
-					for ($i=0; $i<25;$i++)
-					{
-						sleep(60);
-						echo "\n.".($i+1)."min...";
-						if($i==14)
-						{
-							//make new line
-							echo "\n";
-						}
-					}
-				}
-				
-				echo "\nStatement is restarting...";
-				//change number of exceptions here
-				HelperStaticChanger::changeStaticProperty(__CLASS__, "numOfExceptions", (self::$numOfExceptions+1));
-				//make recursion with return statement
-				//TODO to be reviewed how it works at later, think this-> $category output will be empty
-				//especially if there is no subcategories
+				//wait for some time specified in GeneralPerformance
+				GeneralPerformance::waitForResponse();
 				return  self::collectCategoryHierarchy($cookieIn, $proxyIn, $pageHTML, $categoryNameIn, $refererIn, $menuModel);
 			}
 			else 
 			{
-				//reset $numOfExceptions
-				HelperStaticChanger::changeStaticProperty(__CLASS__, "numOfExceptions", 0);
+				//reset $numOfExceptions in generalPerformance
+				GeneralPerformance::resetWaitForResponse();
 				throw new CollectorException($e->getMessage());
 			}
 			
@@ -1053,7 +996,7 @@ class WebsiteCollector
 					//IMPORTANT STUFF HERE -> ALLOWS TO NOT CARE OF HOW MANY SUB_CATEGORIES EXIST
 					//go back to calculation of the recursion
 					//think here, I need to nest it, to make additionally check of the self::calculateRepeatCategories
-					//NOTE however, that some other parts of the code at the moment allows only two sub sub categories
+					//NOTE however, that some other parts of the code at the moment allows only two sub sub categories (fixed)
 					$collectedSteps[] = self::calculateRepeatCategories($cookieIn, $proxyIn,
 									self::collectCategoryHierarchy($cookieIn, $proxyIn, $pageHTML, $arrSubNames[$i], 
 														"http://".self::$websiteDomain.$arrSubMenus[$i], 
@@ -1234,8 +1177,21 @@ class WebsiteCollector
 		//and collect them?
 		//sorted in extractedModel itself;
 		//make extraction of models in here
-		$collectedModels = self::extractModel($cookieIn, $model, $parentCategory, $subcategory,
+		
+		//additional exception handler here, think to implement additional time for 
+		//waiting server response in case it becomes unresponsive. Therefore, 
+		//will keep doing same step over and over, for let's say X time
+		try 
+		{
+			$collectedModels = self::extractModel($cookieIn, $model, $parentCategory, $subcategory,
 											$collectedModels, $referer, $proxyIn, $torBrowserLocationIn);
+		}
+		catch (CollectorException $e)
+		{
+			//wait required time
+			
+		}
+		
 		//return collected models
 		return $collectedModels;
 	}
@@ -1337,14 +1293,14 @@ class WebsiteCollector
 				}
 				else
 				{
-					//anulate exceptions, as execution did happen
-					HelperStaticChanger::changeStaticProperty(__CLASS__, "numOfExceptions", 0);
+					//anulate exceptions, if execution did happen
+					HelperStaticChanger::changeStaticProperty("zaharovs\collector\GeneralPerformance", "numOfExceptions", 0);
 				}
 		 	}
 		 	catch (CollectorException $e)
 		 	{
 		 		//In case cURL will not be able execute page, make spider be sustainable
-	 			//for repeating execution of 5 minutes every 10 seconds (60times*10s), to make sure
+	 			//for repeating execution of [5 minutes every 10 seconds (60times*10s)] NOT CORRECT ANY MORE HERE, to make sure
 	 			//that this happened not for sake of internet, or tor temporary disconection.
 		 		
 		 		//TODO under testing yet here
@@ -1352,52 +1308,17 @@ class WebsiteCollector
 		 		HelperStaticChanger::changeStaticProperty("zaharovs\collector\Spider", "collectedSteps", $spider->getSteps());
 		 		
 		 		//don't throw error for some time
-		 		if(self::$numOfExceptions<60)
+		 		if(GeneralPerformance::$numOfExceptions<60)
 		 		{
-		 			//wait for minute
-		 			if(self::$numOfExceptions<10)
-		 			{
-		 				echo "\nRe-execute statement in 10 seconds";
-		 			}
-		 			if(self::$numOfExceptions>10&&self::$numOfExceptions<30)
-		 			{
-		 				echo "\nRe-execute statement in 15 minutes";
-		 			}
-		 			if(self::$numOfExceptions>10&&self::$numOfExceptions<50)
-		 			{
-		 				echo "\nRe-execute statement in 45 minutes";
-		 			}
-		 			for($i=0; $i<10; $i++)
-		 			{
-		 				if(self::$numOfExceptions<10)
-		 				{
-		 					sleep(1);
-		 				}
-		 				if(self::$numOfExceptions>10&&self::$numOfExceptions<31)
-		 				{
-		 					sleep(60*15);
-		 				}
-		 				if(self::$numOfExceptions>31)
-		 				{
-		 					sleep(60*45);
-		 				}
-		 				echo ".";
-		 				
-		 				//if more than 10 times then wait for 10 minutes each time
-		 				
-		 				
-		 				if($i==59)
-		 				{
-		 					echo "\n";
-		 				}
-		 			}
-		 			HelperStaticChanger::changeStaticProperty(__CLASS__, "numOfExceptions", self::$numOfExceptions+1);
+		 			//wait for response time specified in General Peroformance
+		 			GeneralPerformance::waitForResponse();
+		 			//execute later here
 		 			self::collectProducts($cookieIn, $resourceSaveLocationIn, $spider, $sleepIn);
 		 		}
 		 		else 
 		 		{
 		 			//make sure to annulate num of exceptions
-		 			HelperStaticChanger::changeStaticProperty(__CLASS__, "numOfExceptions", 0);
+		 			GeneralPerformance::resetWaitForResponse();
 		 			//re-throw exception
 		 			throw new CollectorException($e->getMessage());
 		 		}

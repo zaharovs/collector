@@ -37,6 +37,11 @@ class GeneralPerformance
 	 */
 	public static $scannedModels=null;
 	
+	/**
+	 * Number of exception's already happened, therefore can make a track of maximum
+	 * @var int
+	 */
+	public static $numOfExceptions =0;
 	
 	/**
 	 * Setter method for making statistics of how long script is running
@@ -78,4 +83,53 @@ class GeneralPerformance
 		HelperStaticChanger::changeStaticProperty("zaharovs\collector\GeneralPerformance", "currentStamp", time());
 	}
 	
+	/**
+	 * General waiting time of the Collector, for server to become responsive
+	 */
+	public static function waitForResponse()
+	{
+		//wait for minute
+		if(self::$numOfExceptions<10)
+		{
+			echo "\nRe-execute statement in 10 seconds";
+		}
+		if(self::$numOfExceptions>10&&self::$numOfExceptions<30)
+		{
+			echo "\nRe-execute statement in 15 minutes";
+		}
+		if(self::$numOfExceptions>10&&self::$numOfExceptions<50)
+		{
+			echo "\nRe-execute statement in 45 minutes";
+		}
+		for($i=0; $i<10; $i++)
+		{
+			if(self::$numOfExceptions<10)
+			{
+				sleep(1);
+			}
+			if(self::$numOfExceptions>10&&self::$numOfExceptions<31)
+			{
+				sleep(60*15);
+			}
+			if(self::$numOfExceptions>31)
+			{
+				sleep(60*45);
+			}
+			echo ".";
+				
+			//if more than 10 times then wait for 10 minutes each time	
+			if($i==59)
+			{
+				echo "\n";
+			}
+		}
+		HelperStaticChanger::changeStaticProperty(__CLASS__, "numOfExceptions", self::$numOfExceptions+1);
+	}
+	
+	
+	public static function resetWaitForResponse()
+	{
+		//reset counter
+		HelperStaticChanger::changeStaticProperty(__CLASS__, "numOfExceptions", 0);
+	}
 }
