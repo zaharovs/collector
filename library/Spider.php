@@ -1103,6 +1103,17 @@ class Spider implements TorAble
 		$this->steps = $stepsIn;
 	}
 
+	/**
+	 * set next step visited, without even visiting it (for sustainability skip)
+	 */
+	public function setVisitedNextStep()
+	{
+		//make visit here
+		$this->steps[$this->resetStep]->setVisited(true);
+		//increment resetSteps
+		$this->resetStep = $this->resetStep+1;
+	}
+	
 	//TODO NOTE (s) here:
 	/*
 	 * overall notes are going here:

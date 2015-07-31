@@ -1364,6 +1364,27 @@ class WebsiteCollector
 			{
 				//just skip it at the moment for later fix
 				echo "\$itemHTML happened to be false, check it later!\n";
+				//now here we need to make sure, that step becomes visited (to skip)
+				//and execute new statement
+				//if skip is specified
+				//don't throw error for some time
+				if(GeneralPerformance::$numOfExceptions<30)
+				{
+					//wait for response time specified in General Peroformance
+					GeneralPerformance::waitForResponse();
+					//execute later here
+					self::collectProducts($cookieIn, $resourceSaveLocationIn, $spider, $sleepIn);
+				}
+				else
+				{
+					//make sure to annulate num of exceptions
+					GeneralPerformance::resetWaitForResponse();
+					//make step visited
+					//TODO ? how to set it visited here?
+					$spider->setVisitedNextStep();
+					//skip given step here
+					continue;
+				}
 			}
 			//if it went fine continue
 			$itemName = self::getProductName($itemHTML);
