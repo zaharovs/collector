@@ -146,7 +146,7 @@ class Run
 		}
 		
 		//authenticate here
-		GUI::authenticateUser($resultIn->options['cookie'], $resultIn->options['proxy'], $resultIn->options['torDir'], $link, $referer, $userName, $password, $captcha, $website,
+		GUI::authenticateUser($resultIn->options['cookie'], $resultIn->options['proxy'], $resultIn->options['torDirectory'], $link, $referer, $userName, $password, $captcha, $website,
 					$resultIn->options['browserName']);
 		
 		//if authenticated return true, else false

@@ -88,18 +88,20 @@ class GeneralPerformance
 	 */
 	public static function waitForResponse()
 	{
-		//wait for minute
+		//wait for minute 10*10/60 = 1.5 min
 		if(self::$numOfExceptions<10)
 		{
 			echo "\nRe-execute statement in 10 seconds";
 			sleep(10);
 		}
+		//20 * 15 = 300 min = 5 hours
 		if(self::$numOfExceptions>10&&self::$numOfExceptions<30)
 		{
 			echo "\nRe-execute statement in 15 minutes";
 			sleep(60*15);
 		}
-		if(self::$numOfExceptions>10&&self::$numOfExceptions<50)
+		//more than 30, but less than 50 will  equal to 20*45 = 900 minutes / 60 = 15 hours
+		if(self::$numOfExceptions>30&&self::$numOfExceptions<50)
 		{
 			echo "\nRe-execute statement in 45 minutes";
 			sleep(60*45);
