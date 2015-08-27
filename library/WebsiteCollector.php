@@ -1320,6 +1320,9 @@ class WebsiteCollector
 		 		//save steps
 		 		HelperStaticChanger::changeStaticProperty("zaharovs\collector\Spider", "collectedSteps", $spider->getSteps());
 		 		
+		 		//output feedback to the user.
+		 		printf("\nException has been risen: %s\n",$e->getMessage());
+		 		
 		 		//don't throw error for some time
 		 		if(GeneralPerformance::$numOfExceptions<60)
 		 		{

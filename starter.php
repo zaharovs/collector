@@ -613,6 +613,9 @@ function scan_categories(\Console_CommandLine_Result $resultIn, $errN=0)
 		{
 			//at the moment restart anyways
 			GeneralPerformance::waitForResponse();
+			//however update user with info of the exception
+			echo "\n****Exception****\nDetails are: {$e->getMessage()}\n";
+			echo "Restarting ...\n";
 			helper_run($resultIn);
 		}
 	}
